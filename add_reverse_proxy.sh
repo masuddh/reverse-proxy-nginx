@@ -52,8 +52,19 @@ server {
 }
 EOL
 
-    # Membuat symlink ke sites-enabled
+    # Hapus symbolic link jika sudah ada
+    if [ -L "nginx/sites-enabled/${domain}.conf" ]; then
+        rm "nginx/sites-enabled/${domain}.conf"
+    fi
+
+    # Membuat symbolic link baru
     ln -s ../sites-available/$domain.conf nginx/sites-enabled/
+
+    # Restart Nginx untuk memuat konfigurasi baru
+    docker-compose restart nginx
+
+    # Tunggu beberapa detik agar Nginx benar-benar restart
+    sleep 5
 
     # Mendapatkan sertifikat SSL dengan Certbot
     docker run -it --rm --name "certbot_$domain" \
@@ -63,7 +74,7 @@ EOL
       --email your-email@example.com --agree-tos --no-eff-email \
       -d $domain
 
-    # Reload Nginx
+    # Reload Nginx setelah mendapatkan sertifikat
     docker-compose exec nginx nginx -s reload
 }
 
