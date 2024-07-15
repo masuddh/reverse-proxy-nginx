@@ -71,7 +71,8 @@ EOL
       -v "$(pwd)/nginx/certs:/etc/letsencrypt" \
       -v "$(pwd)/nginx/certs-data:/data/letsencrypt" \
       certbot/certbot certonly --webroot --webroot-path=/data/letsencrypt \
-      --email your-email@example.com --agree-tos --no-eff-email \
+    #   --email your-email@example.com --agree-tos --no-eff-email \
+      --register-unsafely-without-email \
       -d $domain
 
     # Reload Nginx setelah mendapatkan sertifikat
